@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Seal</title>
+    <style>
+        .seal-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .seal-container img {
+            width: 200px;
+            cursor: pointer;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="seal-container hide" onclick="clickWebSeal()">
+        <a href="https://wwrnetwork.com/approved-matchmakers" target="_blank">
+            <img id="seal_image" alt="Seal of Approval">
+        </a>
+    </div>
+
+    <script>
+        var sealCode = "9MfgmN9Rui";//replace with your seal code
+        var deploymentId = "AKfycbx0-08YYPm4IeIsX7Sqw3hmVdK6OTCx_5DVuowXEuSXdf4Ja8LR6Hf67GJkoTe7tn71PQ";
+        
+        function convertToDirectLink(shareLink) {
+            const fileIdMatch = shareLink.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            
+            if (fileIdMatch && fileIdMatch[1]) {
+                const fileId = fileIdMatch[1];
+                return `https://drive.google.com/thumbnail?id=${fileId}`;
+            } else {
+                throw new Error('Invalid Google Drive share link');
+            }
+        }
+
+
+        function readWebSeal() {            
+            fetch(`https://script.google.com/macros/s/${deploymentId}/exec?sealCode=${encodeURIComponent(sealCode)}`,
+            {
+                method: 'POST',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    var imgUrl = data.imageUrl;
+                    var img = document.querySelector('#seal_image');
+                    img.src = convertToDirectLink(imgUrl);
+                    // img.src = imgUrl;
+                    var seal_container = document.querySelector('.seal-container').classList.remove('hide');
+                } else {
+                    console.error('Unexpected response:', data);
+                }
+            })
+            .catch(err => {
+                console.error('Error in fetch:', err);
+            });
+        }
+
+        readWebSeal();
+    </script>
+</body>
+
+</html>
